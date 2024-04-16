@@ -3,7 +3,7 @@
 Deep learning has revolutionized speech and text processing, taking it to new heights. But how do we build speech recognition models? It's not as straightforward as it seems. There are different approaches, each with its own complexities. Let's dive into building three different models for three different types of speech inputs.
 1. Frame Level Speech Recognition
 2. Automatic Speech Recognition: Utterance to Phoneme transcription 
-3. Attention-based end-to-end speech-to-text model
+3. Attention-based end-to-end speech-to-text model with Transformer
 
 ## 1. Frame Level Speech Recognition
 
@@ -113,8 +113,47 @@ Training data consists of speech recordings and their corresponding phoneme sequ
 Using this network along with appropriate speech data transformations such as Time Masking and Frequency Masking, we've managed to attain a Levenshtein Distance of 6.
 This approach forms the foundation for various speech processing applications like voice assistants and automatic captioning.
 
+## 3. Attention-based end-to-end speech-to-text model with Transformer Model
+
+In this part, we convert a sequence of speech feature vectors (Mel-Frequency Cepstral Coefficients - MFCCs) into a sequence of characters representing the spoken text. In this task of Sequence-to-Sequence conversion, the encoder-decoder Transformer architecture proves to be highly advantageous and effective.
+
+## Architecture
+### Transformer Encoder(CNN-LSTM):
+- Convolutional Modules: Extract features from the input MFCCs.
+- Positional Encoding: Injects positional information into the input embeddings, as the Transformer processes the entire sequence at once and lacks inherent order.
+- Layer Normalization: Normalizes activations of hidden layers for better training stability.
+- Feed Forward Neural Network: Increases the model's capacity to learn complex relationships.
+- Multi-Head Self-Attention: Allows the encoder to attend to different parts of the input sequence simultaneously, capturing various relationships.
+### Transformer Decoder:
+- Positional Encoding: Similar to the encoder.
+- Layer Normalization: Similar to the encoder.
+- Self-Attention: The decoder attends to its own previous outputs to understand the generated context so far.
+- Multi-Head Attention: The decoder attends to the encoder outputs to comprehend how the input relates to the sequence being generated.
+- Feed Forward Neural Network: Similar to the encoder.
+- Linear Classifier: Outputs the predicted character probabilities.
+### Speech Transformer: 
+- Combines the encoder and decoder to form the complete speech recognition model
+
+  <img width="458" alt="image" src="https://github.com/Santhoshkumar-p/speech-processing/assets/24734488/a50657c3-928e-478c-94b4-b9abe68ca95e">
+
+  </br>
+
+
+## Training:
+- Loss Function: Cross-entropy loss is used, as the model is no longer recurrent and predicts one character at a time.
+- Teacher Forcing: During training, the true previous output is used as input for the next step, ensuring the model directly learns the correct character sequence.
+- Optimizer: AdamW
+- Learning Rate Schedulers: ReduceLR
+## Inference
+- Greedy Search: An algorithm used during inference (testing) to iteratively predict the most likely character at each step, considering the previously generated characters and the encoder outputs.
+- Beam Search: It is a heuristic search algorithm used in sequence generation tasks, like machine translation, to explore multiple candidate sequences   efficiently, retaining only the top-scoring ones at each step.
+Beam Search is the most optimal one as it looks at the overall context and whoel sentence probability.
+
+
+By understanding these different approaches, we can harness the power of deep learning for speech recognition.
+
 ## References
 
 - [Course Website](https://deeplearning.cs.cmu.edu/S24/index.html): Deep Learning Course - CMU
 
-By understanding these different approaches, we can harness the power of deep learning for speech recognition.
+
